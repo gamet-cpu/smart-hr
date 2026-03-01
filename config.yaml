@@ -1,0 +1,7 @@
+port: "8080"
+
+db:
+  url: "postgres://admin:admin123@localhost:5432/smarthr_db?sslmode=disable"
+
+jwt:
+  secret: "supersecretkey"
