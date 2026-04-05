@@ -100,24 +100,24 @@ func (r *UserRepository) GetAll(ctx context.Context) ([]model.User, error) {
 
 		users = append(users, user)
 	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
 
 	return users, nil
 }
 
 // ================= UPDATE =================
 
-func (r *UserRepository) Update(ctx context.Context,
-	id int,
-	name, companyName, phone, description string,
-) error {
+func (r *UserRepository) Update(ctx context.Context, id int, name, companyName, phone, description string) error {
 
 	_, err := r.db.Exec(ctx,
-		`UPDATE users
-		 SET name=$1,
-		     company_name=$2,
-		     phone=$3,
-		     description=$4
-		 WHERE id=$5`,
+		`UPDATE users SET
+	name = COALESCE(NULLIF($1, ''),name),
+	company_name = COALESCE(NULLIF($2,''), company_name),
+	phone = COALESCE(NULLIF($3,''), phone),
+	description = COALESCE(NULLIF($4,''), description)
+WHERE id = $5;`,
 		name, companyName, phone, description, id)
 
 	return err
