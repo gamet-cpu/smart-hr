@@ -70,7 +70,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 		return
 	}
 
-	id, hash, err := h.repo.GetByEmail(context.Background(), req.Email)
+	id, hash, role, err := h.repo.GetByEmail(context.Background(), req.Email)
 	if err != nil ||
 		bcrypt.CompareHashAndPassword([]byte(hash), []byte(req.Password)) != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
@@ -79,6 +79,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id": id,
+		"role":    role,
 		"exp":     time.Now().Add(24 * time.Hour).Unix(),
 	})
 

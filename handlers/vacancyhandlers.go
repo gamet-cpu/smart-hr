@@ -45,9 +45,125 @@ func (v *VacancyHandler) GetVacancyByID(c *gin.Context) {
 }
 
 func (v *VacancyHandler) CreateVacancy(c *gin.Context) {
-	err := v.repo.CreateVacancy(context.Background())
-	if err == "not company"{
-		c.JSON(http.StatusBadRequest, gin.H("error": "You can't create vacancy"))
+	role := c.GetString("role")
+
+	if role != "company" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "only company can create vacancy"})
+		return
 	}
-	c.JSON(http.StatusOK, nil)
+	var req struct {
+		Title          string `json:"title"`
+		DepartmentID   int    `json:"department_id"`
+		CityID         int    `json:"city_id"`
+		IsRemote       bool   `json:"is_remote"`
+		SalaryMin      int    `json:"salary_min"`
+		SalaryMax      int    `json:"salary_max"`
+		Currency       string `json:"currency"`
+		EmploymentType string `json:"employment_type"`
+		Description    string `json:"description"`
+		Status         string `json:"status"`
+	}
+
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	err := v.repo.CreateVacancy(
+		context.Background(),
+		req.Title,
+		req.DepartmentID,
+		req.CityID,
+		req.IsRemote,
+		req.SalaryMin,
+		req.SalaryMax,
+		req.Currency,
+		req.EmploymentType,
+		req.Description,
+		req.Status,
+	)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "vacancy created"})
+}
+
+func (v *VacancyHandler) UpdateVacancy(c *gin.Context) {
+	role := c.GetString("role")
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+	if role != "company" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "only company can update vacancy"})
+		return
+	}
+	var req struct {
+		Title          string `json:"title"`
+		DepartmentID   int    `json:"department_id"`
+		CityID         int    `json:"city_id"`
+		IsRemote       bool   `json:"is_remote"`
+		SalaryMin      int    `json:"salary_min"`
+		SalaryMax      int    `json:"salary_max"`
+		Currency       string `json:"currency"`
+		EmploymentType string `json:"employment_type"`
+		Description    string `json:"description"`
+		Status         string `json:"status"`
+	}
+
+	if err = c.BindJSON(&req); err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = v.repo.UpdateVacancy(
+		context.Background(),
+		id,
+		req.Title,
+		req.DepartmentID,
+		req.CityID,
+		req.IsRemote,
+		req.SalaryMin,
+		req.SalaryMax,
+		req.Currency,
+		req.EmploymentType,
+		req.Description,
+		req.Status,
+	)
+	if err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "vacancy updated"})
+}
+
+func (v *VacancyHandler) DeleteVacancy(c *gin.Context) {
+	role := c.GetString("role")
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+	if role != "company" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "only company can update vacancy"})
+		return
+	}
+	err = v.repo.DeleteVacancy(
+		context.Background(),
+		id,
+	)
+	if err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "vacancy deleted"})
 }

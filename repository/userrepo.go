@@ -28,15 +28,13 @@ func (r *UserRepository) Create(ctx context.Context, name, email, password, role
 
 // ================= LOGIN =================
 
-func (r *UserRepository) GetByEmail(ctx context.Context, email string) (int, string, error) {
-	var id int
-	var hash string
+func (r *UserRepository) GetByEmail(ctx context.Context, email string) (id int, hash string, role string, err error) {
+	err = r.db.QueryRow(ctx,
+		`SELECT id, password_hash, role FROM users WHERE email=$1`,
+		email,
+	).Scan(&id, &hash, &role)
 
-	err := r.db.QueryRow(ctx,
-		`SELECT id, password_hash FROM users WHERE email=$1`,
-		email).Scan(&id, &hash)
-
-	return id, hash, err
+	return
 }
 
 // ================= GET BY ID =================

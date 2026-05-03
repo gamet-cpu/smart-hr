@@ -30,8 +30,10 @@ func main() {
 	userHandler := handler.NewUserHandler(userRepo)
 	vacancyRepo := repository.NewVacancyRepository(dbpool)
 	vacancyHandler := handler.NewVacancyHandler(vacancyRepo)
+	messageRepo := repository.NewMessageRepository(dbpool)
+	messageHandler := handler.NewMessageHandler(messageRepo)
 	r := gin.Default()
-
+	r.POST("/message", messageHandler.SentReq)
 	r.POST("/register", userHandler.Register)
 	r.POST("/login", userHandler.Login)
 
@@ -45,6 +47,8 @@ func main() {
 		auth.GET("/vacancy", vacancyHandler.GetAllVacancy)
 		auth.GET("/vacancy/:id", vacancyHandler.GetVacancyByID)
 		auth.POST("/vacancy", vacancyHandler.CreateVacancy)
+		auth.PUT("/vacancy/:id", vacancyHandler.UpdateVacancy)
+		auth.DELETE("/vacancy/:id", vacancyHandler.DeleteVacancy)
 	}
 
 	r.Run(":" + viper.GetString("port"))
