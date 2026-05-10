@@ -7,12 +7,23 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/spf13/viper"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
+	_ "smart-hr/docs" // ← этого не было!
 	handler "smart-hr/handlers"
 	"smart-hr/middleware"
 	"smart-hr/repository"
 )
 
+// @title           Smart HR API
+// @version         1.0
+// @description     REST API для платформы Smart HR
+// @host            localhost:8080
+// @BasePath        /
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
 
 	viper.SetConfigFile("config.yaml")
@@ -33,6 +44,7 @@ func main() {
 	messageRepo := repository.NewMessageRepository(dbpool)
 	messageHandler := handler.NewMessageHandler(messageRepo)
 	r := gin.Default()
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.POST("/message", messageHandler.SentReq)
 	r.POST("/register", userHandler.Register)
 	r.POST("/login", userHandler.Login)

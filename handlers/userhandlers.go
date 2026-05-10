@@ -21,8 +21,15 @@ func NewUserHandler(r *repository.UserRepository) *UserHandler {
 	return &UserHandler{repo: r}
 }
 
-// ================= REGISTER =================
-
+// Register godoc
+// @Summary      Регистрация пользователя
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        body body object{name=string,email=string,password=string,role=string} true "Данные пользователя"
+// @Success      201 {object} map[string]string
+// @Failure      400 {object} map[string]string
+// @Router       /register [post]
 func (h *UserHandler) Register(c *gin.Context) {
 	var req struct {
 		Name     string `json:"name"`
@@ -57,8 +64,15 @@ func (h *UserHandler) Register(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"message": "registered"})
 }
 
-// ================= LOGIN =================
-
+// Login godoc
+// @Summary      Вход / получение токена
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        body body object{email=string,password=string} true "Логин и пароль"
+// @Success      200 {object} map[string]string "token"
+// @Failure      401 {object} map[string]string
+// @Router       /login [post]
 func (h *UserHandler) Login(c *gin.Context) {
 	var req struct {
 		Email    string `json:"email"`
@@ -92,8 +106,14 @@ func (h *UserHandler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"token": t})
 }
 
-// ================= GET ME =================
-
+// GetMe godoc
+// @Summary      Текущий пользователь
+// @Tags         users
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200 {object} map[string]interface{}
+// @Failure      404 {object} map[string]string
+// @Router       /user/me [get]
 func (h *UserHandler) GetMe(c *gin.Context) {
 	id := c.GetInt("user_id")
 
@@ -106,8 +126,13 @@ func (h *UserHandler) GetMe(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-// ================= GET ALL =================
-
+// GetAll godoc
+// @Summary      Все пользователи
+// @Tags         users
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200 {array}  map[string]interface{}
+// @Router       /users [get]
 func (h *UserHandler) GetAll(c *gin.Context) {
 	users, err := h.repo.GetAll(context.Background())
 	if err != nil {
@@ -118,8 +143,16 @@ func (h *UserHandler) GetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
-// ================= UPDATE =================
-
+// Update godoc
+// @Summary      Обновить профиль
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        body body object{name=string,company_name=string,phone=string,description=string} true "Поля для обновления"
+// @Success      200 {object} map[string]string
+// @Failure      400 {object} map[string]string
+// @Router       /user [put]
 func (h *UserHandler) Update(c *gin.Context) {
 	id := c.GetInt("user_id")
 
@@ -152,8 +185,13 @@ func (h *UserHandler) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "updated"})
 }
 
-// ================= DELETE =================
-
+// Delete godoc
+// @Summary      Удалить аккаунт
+// @Tags         users
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200 {object} map[string]string
+// @Router       /user [delete]
 func (h *UserHandler) Delete(c *gin.Context) {
 	id := c.GetInt("user_id")
 

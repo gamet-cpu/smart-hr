@@ -18,6 +18,13 @@ func NewVacancyHandler(r *repository.VacancyRepository) *VacancyHandler {
 	return &VacancyHandler{repo: r}
 }
 
+// GetAllVacancy godoc
+// @Summary      Список вакансий
+// @Tags         vacancy
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200 {array}  map[string]interface{}
+// @Router       /vacancy [get]
 func (v *VacancyHandler) GetAllVacancy(c *gin.Context) {
 	users, err := v.repo.GetAllVacancy(context.Background())
 	if err != nil {
@@ -28,6 +35,16 @@ func (v *VacancyHandler) GetAllVacancy(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
+// GetVacancyByID godoc
+// @Summary      Вакансия по ID
+// @Tags         vacancy
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id path int true "ID вакансии"
+// @Success      200 {object} map[string]interface{}
+// @Failure      400 {object} map[string]string
+// @Failure      404 {object} map[string]string
+// @Router       /vacancy/{id} [get]
 func (v *VacancyHandler) GetVacancyByID(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
@@ -44,6 +61,17 @@ func (v *VacancyHandler) GetVacancyByID(c *gin.Context) {
 	c.JSON(http.StatusOK, vacancy)
 }
 
+// CreateVacancy godoc
+// @Summary      Создать вакансию (только company)
+// @Tags         vacancy
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        body body object{title=string,department_id=int,city_id=int,is_remote=bool,salary_min=int,salary_max=int,currency=string,employment_type=string,description=string,status=string} true "Данные вакансии"
+// @Success      200 {object} map[string]string
+// @Failure      400 {object} map[string]string
+// @Failure      403 {object} map[string]string
+// @Router       /vacancy [post]
 func (v *VacancyHandler) CreateVacancy(c *gin.Context) {
 	role := c.GetString("role")
 
@@ -89,6 +117,18 @@ func (v *VacancyHandler) CreateVacancy(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "vacancy created"})
 }
 
+// UpdateVacancy godoc
+// @Summary      Обновить вакансию (только company)
+// @Tags         vacancy
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path int true "ID вакансии"
+// @Param        body body object{title=string,department_id=int,city_id=int,is_remote=bool,salary_min=int,salary_max=int,currency=string,employment_type=string,description=string,status=string} true "Поля для обновления"
+// @Success      200 {object} map[string]string
+// @Failure      400 {object} map[string]string
+// @Failure      403 {object} map[string]string
+// @Router       /vacancy/{id} [put]
 func (v *VacancyHandler) UpdateVacancy(c *gin.Context) {
 	role := c.GetString("role")
 	idStr := c.Param("id")
@@ -143,6 +183,16 @@ func (v *VacancyHandler) UpdateVacancy(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "vacancy updated"})
 }
 
+// DeleteVacancy godoc
+// @Summary      Удалить вакансию (только company)
+// @Tags         vacancy
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id path int true "ID вакансии"
+// @Success      200 {object} map[string]string
+// @Failure      400 {object} map[string]string
+// @Failure      403 {object} map[string]string
+// @Router       /vacancy/{id} [delete]
 func (v *VacancyHandler) DeleteVacancy(c *gin.Context) {
 	role := c.GetString("role")
 	idStr := c.Param("id")

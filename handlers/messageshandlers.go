@@ -16,6 +16,15 @@ func NewMessageHandler(m *repository.MessageRepository) *MessageHandler {
 	return &MessageHandler{repo: m}
 }
 
+// SentReq godoc
+// @Summary      Отправить сообщение / обращение
+// @Tags         message
+// @Accept       json
+// @Produce      json
+// @Param        body body object{name=string,email=string,topic=string,description=string} true "Данные сообщения"
+// @Success      201 {object} map[string]string
+// @Failure      400 {object} map[string]string
+// @Router       /message [post]
 func (m *MessageHandler) SentReq(c *gin.Context) {
 	var req struct {
 		Name        string `json:"name"`
