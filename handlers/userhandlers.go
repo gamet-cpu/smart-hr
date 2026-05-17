@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"net/http"
+	"strconv"
 	"time"
 
 	"smart-hr/repository"
@@ -202,4 +203,49 @@ func (h *UserHandler) Delete(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "deleted"})
+}
+
+// Respond Vacancy godoc
+// @Summary      Откликтнутся на вакансию
+// @Tags         users
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200 {object} map[string]string
+// @Router       /user/{id} [put]
+func (h *UserHandler) RespondVacancy(c *gin.Context) {
+	userId := c.GetInt("user_id")
+	idStr := c.Param("id")
+	vacId, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid id"})
+	}
+	err = h.repo.RespondVacancy(context.Background(), userId, vacId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "responded"})
+}
+
+// Responded Vacancy godoc
+// @Summary      Список Соискателей
+// @Tags         users
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200 {object} map[string]string
+// @Router       /users/responses/{id} [get]
+func (h *UserHandler) GetResponses(c *gin.Context) {
+	idStr := c.Param("id")
+	vacId, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid id"})
+	}
+	users, err := h.repo.GetResponses(context.Background(), vacId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, users)
 }

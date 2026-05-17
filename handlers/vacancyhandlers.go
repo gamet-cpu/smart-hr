@@ -202,7 +202,7 @@ func (v *VacancyHandler) DeleteVacancy(c *gin.Context) {
 		return
 	}
 	if role != "company" {
-		c.JSON(http.StatusForbidden, gin.H{"error": "only company can update vacancy"})
+		c.JSON(http.StatusForbidden, gin.H{"error": "only company can delete vacancy"})
 		return
 	}
 	err = v.repo.DeleteVacancy(
@@ -216,4 +216,133 @@ func (v *VacancyHandler) DeleteVacancy(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "vacancy deleted"})
+}
+
+// SoftDeleteVacancy godoc
+// @Summary      Удаление васансии перенос в архив
+// @Tags         vacancy
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id path int true "ID вакансии"
+// @Success      200 {object} map[string]string
+// @Failure      400 {object} map[string]string
+// @Failure      403 {object} map[string]string
+// @Router       /vacancy/archive/{id} [delete]
+func (v *VacancyHandler) SoftDelete(c *gin.Context) {
+	role := c.GetString("role")
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+	if role != "company" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "only company can delete vacancy"})
+		return
+	}
+
+	vacancy, err := v.repo.GetVacancyByID(context.Background(), id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "vacancy not found"})
+		return
+	}
+
+	err = v.repo.SoftDelete(
+		context.Background(),
+		id,
+		*vacancy,
+	)
+	if err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "vacancy soft deleted"})
+}
+
+// GetArchiveVacancy godoc
+// @Summary      Список архивированных вакансий
+// @Tags         vacancy
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200 {array}  map[string]interface{}
+// @Router       /vacancy/archive [get]
+func (v *VacancyHandler) GetArchiveVacancy(c *gin.Context) {
+	users, err := v.repo.GetArchiveVacancy(context.Background())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, users)
+}
+
+// GetArchiveVacancyByID godoc
+// @Summary      Архивная Вакансия по ID
+// @Tags         vacancy
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id path int true "ID вакансии"
+// @Success      200 {object} map[string]interface{}
+// @Failure      400 {object} map[string]string
+// @Failure      404 {object} map[string]string
+// @Router       /vacancy/archive/{id} [get]
+func (v *VacancyHandler) GetArchiveVacancyByID(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+	vacancy, err := v.repo.GetArchiveVacancyByID(context.Background(), id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "vacancy not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, vacancy)
+}
+
+// SoftDeleteVacancy godoc
+// @Summary      Деархивирование вакансии
+// @Tags         vacancy
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id path int true "ID вакансии"
+// @Success      200 {object} map[string]string
+// @Failure      400 {object} map[string]string
+// @Failure      403 {object} map[string]string
+// @Router       /vacancy/archive/{id} [put]
+func (v *VacancyHandler) UnArchiveVacancy(c *gin.Context) {
+	role := c.GetString("role")
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
+		return
+	}
+	if role != "company" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "only company unarhive vacancy"})
+		return
+	}
+
+	vacancy, err := v.repo.GetArchiveVacancyByID(context.Background(), id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "vacancy not found"})
+		return
+	}
+
+	err = v.repo.UnArchiveVacancy(
+		context.Background(),
+		id,
+		*vacancy,
+	)
+	if err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "vacancy unarchived"})
 }

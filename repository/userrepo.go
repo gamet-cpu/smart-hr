@@ -128,3 +128,36 @@ func (r *UserRepository) Delete(ctx context.Context, id int) error {
 		`DELETE FROM users WHERE id=$1`, id)
 	return err
 }
+
+func (r *UserRepository) RespondVacancy(ctx context.Context, userId int, vacId int) error {
+	_, err := r.db.Exec(ctx,
+		`INSERT INTO responses (id_user,id_vacancy)
+		 VALUES ($1,$2)`,
+		userId, vacId)
+
+	return err
+}
+
+func (r *UserRepository) GetResponses(ctx context.Context, vacId int) ([]int, error) {
+	rows, err := r.db.Query(ctx, `
+		SELECT id_user
+		FROM responses WHERE id_vacancy = $1`, vacId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var ids []int
+	for rows.Next() {
+		var id int
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return ids, nil
+}

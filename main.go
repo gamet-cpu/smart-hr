@@ -56,11 +56,17 @@ func main() {
 		auth.GET("/users", userHandler.GetAll)
 		auth.PUT("/user", userHandler.Update)
 		auth.DELETE("/user", userHandler.Delete)
+		auth.PUT("/user/:id", userHandler.RespondVacancy)
+		auth.GET("/users/responses/:id", userHandler.GetResponses)
 		auth.GET("/vacancy", vacancyHandler.GetAllVacancy)
 		auth.GET("/vacancy/:id", vacancyHandler.GetVacancyByID)
 		auth.POST("/vacancy", vacancyHandler.CreateVacancy)
 		auth.PUT("/vacancy/:id", vacancyHandler.UpdateVacancy)
 		auth.DELETE("/vacancy/:id", vacancyHandler.DeleteVacancy)
+		auth.DELETE("/vacancy/archive/:id", vacancyHandler.SoftDelete)
+		auth.GET("/vacancy/archive", vacancyHandler.GetArchiveVacancy)
+		auth.GET("/vacancy/archive/:id", vacancyHandler.GetArchiveVacancyByID)
+		auth.PUT("/vacancy/archive/:id", vacancyHandler.UnArchiveVacancy)
 	}
 
 	r.Run(":" + viper.GetString("port"))
