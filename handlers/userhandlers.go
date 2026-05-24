@@ -112,6 +112,7 @@ func (h *UserHandler) Login(c *gin.Context) {
 // @Tags         users
 // @Produce      json
 // @Security     BearerAuth
+// @Param        id path int true "ID вакансии"
 // @Success      200 {object} map[string]interface{}
 // @Failure      404 {object} map[string]string
 // @Router       /user/me [get]
@@ -210,6 +211,7 @@ func (h *UserHandler) Delete(c *gin.Context) {
 // @Tags         users
 // @Produce      json
 // @Security     BearerAuth
+// @Param        id path int true "ID вакансии"
 // @Success      200 {object} map[string]string
 // @Router       /user/{id} [put]
 func (h *UserHandler) RespondVacancy(c *gin.Context) {
@@ -233,6 +235,7 @@ func (h *UserHandler) RespondVacancy(c *gin.Context) {
 // @Tags         users
 // @Produce      json
 // @Security     BearerAuth
+// @Param        id path int true "ID вакансии"
 // @Success      200 {object} map[string]string
 // @Router       /users/responses/{id} [get]
 func (h *UserHandler) GetResponses(c *gin.Context) {
@@ -248,4 +251,21 @@ func (h *UserHandler) GetResponses(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, users)
+}
+
+// MyRespondedVacancy godoc
+// @Summary      Мои отклики
+// @Tags         users
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200 {object} map[string]string
+// @Router       /users/myresponses [get]
+func (h *UserHandler) MyResponses(c *gin.Context) {
+	userId := c.GetInt("user_id")
+	vacancy, err := h.repo.MyResponses(context.Background(), userId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, vacancy)
 }

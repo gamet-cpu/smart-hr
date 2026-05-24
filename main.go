@@ -52,21 +52,23 @@ func main() {
 	auth := r.Group("/")
 	auth.Use(middleware.AuthMiddleware())
 	{
-		auth.GET("/user/me", userHandler.GetMe)
-		auth.GET("/users", userHandler.GetAll)
-		auth.PUT("/user", userHandler.Update)
-		auth.DELETE("/user", userHandler.Delete)
-		auth.PUT("/user/:id", userHandler.RespondVacancy)
-		auth.GET("/users/responses/:id", userHandler.GetResponses)
-		auth.GET("/vacancy", vacancyHandler.GetAllVacancy)
-		auth.GET("/vacancy/:id", vacancyHandler.GetVacancyByID)
-		auth.POST("/vacancy", vacancyHandler.CreateVacancy)
-		auth.PUT("/vacancy/:id", vacancyHandler.UpdateVacancy)
-		auth.DELETE("/vacancy/:id", vacancyHandler.DeleteVacancy)
-		auth.DELETE("/vacancy/archive/:id", vacancyHandler.SoftDelete)
-		auth.GET("/vacancy/archive", vacancyHandler.GetArchiveVacancy)
-		auth.GET("/vacancy/archive/:id", vacancyHandler.GetArchiveVacancyByID)
-		auth.PUT("/vacancy/archive/:id", vacancyHandler.UnArchiveVacancy)
+		auth.GET("/user/me", userHandler.GetMe)                                //Получение данных о пользователе
+		auth.GET("/users", userHandler.GetAll)                                 //Получение данных о всех пользователях
+		auth.PUT("/user", userHandler.Update)                                  //Обновление данных пользователя
+		auth.DELETE("/user", userHandler.Delete)                               //Удаление пользователя
+		auth.PUT("/user/:id", userHandler.RespondVacancy)                      //Откликтнутся на вакансию
+		auth.GET("/users/myresponses", userHandler.MyResponses)                //Вакансии на которые откликнулся пользователь
+		auth.GET("/users/responses/:id", userHandler.GetResponses)             //Пользователи откликнувшиеся на вакансию
+		auth.GET("/vacancy", vacancyHandler.GetAllVacancy)                     //Список всех вакансий
+		auth.GET("/vacancy/:id", vacancyHandler.GetVacancyByID)                //Конкретная вакансия по ID
+		auth.POST("/vacancy", vacancyHandler.CreateVacancy)                    //Создать вакансию
+		auth.PUT("/vacancy/:id", vacancyHandler.UpdateVacancy)                 //Обновить данные о вакансии
+		auth.DELETE("/vacancy/:id", vacancyHandler.DeleteVacancy)              //Удалить вакансию полностью
+		auth.DELETE("/vacancy/archive/:id", vacancyHandler.SoftDelete)         //Удаление вакансии с переносом в архив
+		auth.GET("/vacancy/archive", vacancyHandler.GetArchiveVacancy)         //Список архивированных вакансий
+		auth.GET("/vacancy/archive/:id", vacancyHandler.GetArchiveVacancyByID) //Архивированная вакансия по ID
+		auth.PUT("/vacancy/archive/:id", vacancyHandler.UnArchiveVacancy)      //Деархивация вакансии
+		auth.GET("/vacancy/topvacancy", vacancyHandler.TopVacancy)             //Самые активные 5 вакансий
 	}
 
 	r.Run(":" + viper.GetString("port"))

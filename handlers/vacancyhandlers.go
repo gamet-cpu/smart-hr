@@ -346,3 +346,22 @@ func (v *VacancyHandler) UnArchiveVacancy(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "vacancy unarchived"})
 }
+
+// TopVacancy godoc
+// @Summary      Топ вакансий
+// @Tags         vacancy
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200 {object} map[string]interface{}
+// @Failure      400 {object} map[string]string
+// @Failure      404 {object} map[string]string
+// @Router       /vacancy/topvacancy [get]
+func (v *VacancyHandler) TopVacancy(c *gin.Context) {
+	vacancy, err := v.repo.TopVacancy(context.Background())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, vacancy)
+}

@@ -253,3 +253,32 @@ func (v *VacancyRepository) UnArchiveVacancy(ctx context.Context, id int, vac mo
 
 	return err
 }
+
+func (v *VacancyRepository) TopVacancy(ctx context.Context) ([]int, error) {
+	rows, err := v.db.Query(ctx, `
+		SELECT 
+    id_vacancy,
+    COUNT(*) AS response_count
+FROM responses
+GROUP BY id_vacancy
+ORDER BY response_count DESC
+LIMIT 5;`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var vacIds []int
+	for rows.Next() {
+		var id int
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		vacIds = append(vacIds, id)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return vacIds, nil
+}

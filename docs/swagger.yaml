@@ -173,6 +173,12 @@ paths:
       - users
   /user/{id}:
     put:
+      parameters:
+      - description: ID вакансии
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -189,6 +195,12 @@ paths:
       - users
   /user/me:
     get:
+      parameters:
+      - description: ID вакансии
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -225,8 +237,30 @@ paths:
       summary: Все пользователи
       tags:
       - users
+  /users/myresponses:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Мои отклики
+      tags:
+      - users
   /users/responses/{id}:
     get:
+      parameters:
+      - description: ID вакансии
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -557,6 +591,33 @@ paths:
       security:
       - BearerAuth: []
       summary: Деархивирование вакансии
+      tags:
+      - vacancy
+  /vacancy/topvacancy:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Топ вакансий
       tags:
       - vacancy
 securityDefinitions:

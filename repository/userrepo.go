@@ -161,3 +161,27 @@ func (r *UserRepository) GetResponses(ctx context.Context, vacId int) ([]int, er
 
 	return ids, nil
 }
+
+func (r *UserRepository) MyResponses(ctx context.Context, userId int) ([]int, error) {
+	rows, err := r.db.Query(ctx, `
+		SELECT id_vacancy
+		FROM responses WHERE id_user = $1`, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var vacIds []int
+	for rows.Next() {
+		var id int
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		vacIds = append(vacIds, id)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return vacIds, nil
+}
