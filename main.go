@@ -43,6 +43,8 @@ func main() {
 	vacancyHandler := handler.NewVacancyHandler(vacancyRepo)
 	messageRepo := repository.NewMessageRepository(dbpool)
 	messageHandler := handler.NewMessageHandler(messageRepo)
+	meetRepo := repository.NewMeetRepository(dbpool)
+	meetHandler := handler.NewMeetHandler(meetRepo)
 	r := gin.Default()
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.POST("/message", messageHandler.SentReq)
@@ -69,6 +71,8 @@ func main() {
 		auth.GET("/vacancy/archive/:id", vacancyHandler.GetArchiveVacancyByID) //Архивированная вакансия по ID
 		auth.PUT("/vacancy/archive/:id", vacancyHandler.UnArchiveVacancy)      //Деархивация вакансии
 		auth.GET("/vacancy/topvacancy", vacancyHandler.TopVacancy)             //Самые активные 5 вакансий
+		auth.GET("/vacancy/actualvacancy", vacancyHandler.ActualVacancy)       //Новые вакансии
+		auth.GET("/meets", meetHandler.GetAllMeets)                            //Все встречи пользователя
 	}
 
 	r.Run(":" + viper.GetString("port"))

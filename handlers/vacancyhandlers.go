@@ -365,3 +365,22 @@ func (v *VacancyHandler) TopVacancy(c *gin.Context) {
 
 	c.JSON(http.StatusOK, vacancy)
 }
+
+// ActualVacancy godoc
+// @Summary      Актуальные вакансии
+// @Tags         vacancy
+// @Produce      json
+// @Security     BearerAuth
+// @Success      200 {object} map[string]interface{}
+// @Failure      400 {object} map[string]string
+// @Failure      404 {object} map[string]string
+// @Router       /vacancy/actualvacancy [get]
+func (v *VacancyHandler) ActualVacancy(c *gin.Context) {
+	vacancy, err := v.repo.ActualVacancy(context.Background())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, vacancy)
+}

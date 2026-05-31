@@ -282,3 +282,26 @@ LIMIT 5;`)
 
 	return vacIds, nil
 }
+
+func (v *VacancyRepository) ActualVacancy(ctx context.Context) ([]int, error) {
+	rows, err := v.db.Query(ctx, `
+		SELECT id FROM vacancy ORDER BY published_at DESC LIMIT 5;`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var vacIds []int
+	for rows.Next() {
+		var id int
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		vacIds = append(vacIds, id)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return vacIds, nil
+}

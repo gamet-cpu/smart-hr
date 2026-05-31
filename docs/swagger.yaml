@@ -477,6 +477,33 @@ paths:
       summary: Обновить вакансию (только company)
       tags:
       - vacancy
+  /vacancy/actualvacancy:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Актуальные вакансии
+      tags:
+      - vacancy
   /vacancy/archive:
     get:
       produces:
