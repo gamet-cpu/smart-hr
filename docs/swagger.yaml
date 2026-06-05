@@ -40,6 +40,186 @@ paths:
       summary: Вход / получение токена
       tags:
       - auth
+  /meets:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Список встреч
+      tags:
+      - meets
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Данные встречи
+        in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            ' additional':
+              type: string
+            ' link':
+              type: string
+            ' meet_date':
+              type: string
+            ' meet_leight':
+              type: integer
+            ' meet_type':
+              type: string
+            ' start_time':
+              type: string
+            ' user_id':
+              type: integer
+            recruter_id:
+              type: integer
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Назначить встречу (только company)
+      tags:
+      - meets
+  /meets/{id}:
+    delete:
+      parameters:
+      - description: ID встречи
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Удалить встречу (только company)
+      tags:
+      - meets
+    get:
+      parameters:
+      - description: ID встречи
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              additionalProperties: true
+              type: object
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Встреча по Id
+      tags:
+      - meets
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID встречи
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Данные встречи
+        in: body
+        name: body
+        required: true
+        schema:
+          properties:
+            ' additional':
+              type: string
+            ' link':
+              type: string
+            ' meet_leight':
+              type: integer
+            ' meet_type':
+              type: string
+            ' start_time':
+              type: string
+            meet_date:
+              type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Изменить встречу (только company)
+      tags:
+      - meets
   /message:
     post:
       consumes:

@@ -73,6 +73,10 @@ func main() {
 		auth.GET("/vacancy/topvacancy", vacancyHandler.TopVacancy)             //Самые активные 5 вакансий
 		auth.GET("/vacancy/actualvacancy", vacancyHandler.ActualVacancy)       //Новые вакансии
 		auth.GET("/meets", meetHandler.GetAllMeets)                            //Все встречи пользователя
+		auth.GET("/meets/:id", meetHandler.GetMeetById)                        //Встреча по id
+		auth.POST("/meets", meetHandler.CreateMeet)                            //Назначить встречу
+		auth.PUT("/meets/:id", meetHandler.UpdateMeet)                         //Изменить встречу
+		auth.DELETE("/meets/:id", meetHandler.DeleteMeet)                      //Удалить встречу
 	}
 
 	r.Run(":" + viper.GetString("port"))
