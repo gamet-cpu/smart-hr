@@ -1,5 +1,6 @@
 package main
 
+//docker exec -i my-postgres psql -U admin -d smarthr_db < smarthr_db_backup.sql
 import (
 	"context"
 	"log"
@@ -10,7 +11,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	_ "smart-hr/docs" // ← этого не было!
+	_ "smart-hr/docs"
 	handler "smart-hr/handlers"
 	"smart-hr/middleware"
 	"smart-hr/repository"
